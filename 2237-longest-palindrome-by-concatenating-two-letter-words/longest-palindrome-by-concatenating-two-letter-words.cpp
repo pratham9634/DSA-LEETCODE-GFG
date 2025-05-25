@@ -11,7 +11,7 @@ public:
             if (w == s) {
                 count += (freq / 2) * 4;
                 if (freq % 2) alreadyPalindrome = 1;
-            } else if (w < s && mpp.count(s)) {
+            } else if (w > s && mpp.count(s)) {
                 count += min(freq, mpp[s]) * 4;
             }
         }
