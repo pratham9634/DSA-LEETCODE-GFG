@@ -1,40 +1,45 @@
 class Solution {
 public:
-    bool isValidSudoku(vector<vector<char>>& m) {
+    bool isValidSudoku(vector<vector<char>>& board) {
         int n = 9;
 
-        for (int i = 0; i < n; i++) {
-            unordered_map<char, int> mp;
-            for (int j = 0; j < n; j++) {
-                if (m[i][j] != '.') {
-                    if (++mp[m[i][j]] > 1) return false; 
+        // Check rows
+        for(int i=0;i<n;i++){
+            unordered_map<char,int> mp;
+            for(int j=0;j<n;j++){
+                if(board[i][j] != '.'){
+                    if(mp[board[i][j]]) return false;
+                    mp[board[i][j]]++;
                 }
             }
         }
 
-        for (int i = 0; i < n; i++) {
-            unordered_map<char, int> mp;
-            for (int j = 0; j < n; j++) {
-                if (m[j][i] != '.') {
-                    if (++mp[m[j][i]] > 1) return false;
+        // Check columns
+        for(int i=0;i<n;i++){
+            unordered_map<char,int> mp;
+            for(int j=0;j<n;j++){
+                if(board[j][i] != '.'){
+                    if(mp[board[j][i]]) return false;
+                    mp[board[j][i]]++;
                 }
             }
         }
 
-        for (int row = 0; row < 9; row += 3) {
-            for (int col = 0; col < 9; col += 3) {
-                unordered_map<char, int> mp;
-                for (int i = 0; i < 3; ++i) {
-                    for (int j = 0; j < 3; ++j) {
-                        char current = m[row + i][col + j];
-                        if (current != '.') {
-                            if (++mp[current] > 1) return false;
+        // Check 3x3 subgrids
+        for(int i=0;i<n;i+=3){
+            for(int j=0;j<n;j+=3){
+                unordered_map<char,int> mp;
+                for(int r=0;r<3;r++){
+                    for(int c=0;c<3;c++){
+                        if(board[i+r][j+c] != '.'){
+                            if(mp[board[i+r][j+c]]) return false;
+                            mp[board[i+r][j+c]]++;
                         }
                     }
                 }
             }
         }
 
-        return true; 
+        return true;
     }
 };
