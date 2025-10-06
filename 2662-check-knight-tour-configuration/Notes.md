@@ -1,0 +1,1 @@
+<h2>check-knight-tour-configuration Notes</h2><hr>[ Time taken: 12 hrs 12 m 9 s ]
