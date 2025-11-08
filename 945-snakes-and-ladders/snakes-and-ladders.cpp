@@ -1,32 +1,26 @@
 class Solution {
 public:
-    int snakesAndLadders(vector<vector<int>> &board) {
-        int n = board.size(), lbl = 1;
-        vector<pair<int, int>> cells(n*n+1);
-        vector<int> columns(n);
-        iota(columns.begin(), columns.end(), 0);
-        for (int row = n - 1; row >= 0; row--) {
-            for (int column : columns) {
-                cells[lbl++] = {row, column};
-            }
-            reverse(columns.begin(), columns.end());
-        }
-        vector<int> dist(n*n+1, -1);
-        dist[1] = 0;
+    int snakesAndLadders(vector<vector<int>>& board) {
+        int n = board.size();
+        vector<int> min_rolls(n * n + 1, -1);
         queue<int> q;
+        min_rolls[1] = 0;
         q.push(1);
         while (!q.empty()) {
-            int curr = q.front();
+            int x = q.front();
             q.pop();
-            for (int next = curr + 1; next <= min(curr+6, n*n); next++) {
-                auto [row, column] = cells[next];
-                int destination = board[row][column] != -1 ? board[row][column] : next;
-                if (dist[destination] == -1) {
-                    dist[destination] = dist[curr] + 1;
-                    q.push(destination);
+            for (int i = 1; i <= 6 && x + i <= n * n; i++) {
+                int t = x + i, row = (t - 1) / n, col = (t - 1) % n;
+                int v = board[n - 1 - row][row % 2 ? n - 1 - col : col];
+                int y = v > 0 ? v : t; 
+                if (y == n * n)
+                    return min_rolls[x] + 1;
+                if (min_rolls[y] == -1) {
+                    min_rolls[y] = min_rolls[x] + 1;
+                    q.push(y);
                 }
             }
         }
-        return dist[n*n];
+        return -1;
     }
 };
