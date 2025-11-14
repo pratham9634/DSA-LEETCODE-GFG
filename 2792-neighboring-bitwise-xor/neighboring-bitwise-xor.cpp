@@ -1,6 +1,12 @@
 class Solution {
 public:
-    static bool doesValidArrayExist(vector<int>& derived) {
-        return (reduce(derived.begin(), derived.end(), 0)&1)==0;
+    bool doesValidArrayExist(vector<int>& derived) {
+         int XOR = 0;
+
+        for(int &x : derived) {
+            XOR  = (XOR ^ x);
+        }
+
+        return XOR == 0;
     }
 };
