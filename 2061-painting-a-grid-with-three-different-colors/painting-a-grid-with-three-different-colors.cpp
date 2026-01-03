@@ -1,36 +1,68 @@
 class Solution {
 public:
-    const int mod = 1e9 + 7;
-    int dp[1005][250], rowValid[250][250];
-    vector<int> good, pattern [250];
-    int colorTheGrid(int m, int n) {
-        int total = pow(3, m);
+    vector<vector<int>> t;
+    vector<string> columnStates;
+    const int MOD = 1e9 + 7;
 
-        for (int i = 0; i < total; i++) {
-            int val = i, valid = 1;
-            for (int j = 0; j < m; j++) 
-                pattern[i].push_back(val % 3), val /= 3;
-            for (int j = 1; j < m; j++) 
-                if (pattern[i][j] == pattern[i][j - 1]) valid = 0;
-            if (valid) good.push_back(i);
+    // Recursively generate all valid column colorings of height 'rows'
+    // such that no two vertically adjacent cells have the same color
+    void generateColumnStates(string currentColumn, int rowsRemaining, char prevColor) {
+        if (rowsRemaining == 0) {
+            columnStates.push_back(currentColumn);
+            return;
         }
-        for (int i : good) dp[1][i] = 1;
 
-        for (int i : good) {
-            for (int j : good) {
-                rowValid[i][j] = 1;
-                for (int k = 0; k < m; k++) 
-                    if (pattern[i][k] == pattern[j][k]) 
-                        rowValid[i][j] = 0;
+        // Colors: 'R' = Red, 'G' = Green, 'B' = Blue
+        for (char color : {'R', 'G', 'B'}) {
+            if (color == prevColor) 
+                continue;  // adjacent vertical cells must be different
+
+            generateColumnStates(currentColumn + color, rowsRemaining - 1, color);
+        }
+    }
+
+    int solve(int remainingCols, int prevColumnIdx, int m) {
+        if (remainingCols == 0) 
+            return 1;
+        if (t[remainingCols][prevColumnIdx] != -1) 
+            return t[remainingCols][prevColumnIdx];
+
+        int totalWays = 0;
+        string prevColumn = columnStates[prevColumnIdx];
+
+        for (int nextColumnIdx = 0; nextColumnIdx < columnStates.size(); nextColumnIdx++) {
+            string nextColumn = columnStates[nextColumnIdx];
+            bool valid = true;
+
+            // Check horizontal adjacency (no adjacent same color in same row)
+            for (int r = 0; r < m; r++) {
+                if (prevColumn[r] == nextColumn[r]) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (valid) {
+                totalWays = (totalWays + solve(remainingCols - 1, nextColumnIdx, m)) % MOD;
             }
         }
 
-        for (int col = 2; col <= n; col++)
-            for (int i : good)
-                for (int j : good)
-                    if (rowValid[i][j]) 
-                        dp[col][i] = (dp[col][i] + dp[col - 1][j]) % mod;
-                        
-        return accumulate(dp[n], dp[n] + total, 0L) % mod;
+        return t[remainingCols][prevColumnIdx] = totalWays;
+    }
+
+    int colorTheGrid(int m, int n) {
+        columnStates.clear();
+        generateColumnStates("", m, '#');  // '#' indicates no previous color
+
+        int numColumnPatterns = columnStates.size();
+        t.assign(n, vector<int>(numColumnPatterns, -1));
+
+        int result = 0;
+        for (int i = 0; i < numColumnPatterns; i++) {
+            result = (result + solve(n - 1, i, m)) % MOD;
+        }
+
+        return result;
     }
 };
+
