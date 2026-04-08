@@ -1,23 +1,22 @@
 class Solution {
 public:
-    vector<vector<int>> combinationSum(vector<int>& nums, int target) {
-		// dp vector to store all possible combinations of the target sum
-        vector <vector <vector <int>>> dp(target+1);
-        dp[0]={{}};
-        for(int &i:nums)
-        {
-		// Iterating through all the elements from array nums aka candidates
-            for(int j=i;j<=target;j++)
-            {
-			// Finding all possible ways to achieve sum j from element i
-                for(auto v:dp[j-i])
-                {
-                    v.push_back(i);
-                    dp[j].push_back(v);
-                }
-            }
+    void solve(vector<int>&curr,int idx,vector<int>&nums,vector<vector<int>>&ans,int tg){
+        if(tg<0) return;
+        if(tg==0){
+            ans.push_back(curr);
+            return;
         }
-		// Finally, returning our ans 🙃
-        return dp[target];
+        for(int i=idx;i<nums.size();i++){
+
+            curr.push_back(nums[i]);
+            solve(curr,i,nums,ans,tg-nums[i]);
+            curr.pop_back();
+        }
+    }
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>>ans;
+        vector<int>curr;
+        solve(curr,0,candidates,ans,target);
+        return ans;
     }
 };
