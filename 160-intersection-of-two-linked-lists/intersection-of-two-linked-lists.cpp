@@ -1,32 +1,25 @@
+
 class Solution {
 public:
     ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
-        ListNode* tempA = headA;
-        ListNode* tempB = headB;
-        
-        // Mark nodes in list A by negating their values
-        while(tempA){
-            tempA->val = tempA->val * (-1);
-            tempA = tempA->next;
+        ListNode* h1 = headA;
+        ListNode* h2 = headB;
+        ListNode* ans = NULL;
+        while(h1){
+            h1->val = h1->val*(-1);
+            h1 = h1->next;
         }
-        
-        ListNode* ans = nullptr;
-        
-        // Check nodes in list B for intersection
-        tempB = headB;
-        while(tempB){
-            if(tempB->val < 0){
-                ans = tempB;
+        while(h2){
+            if(h2->val<0){
+                ans = h2;
                 break;
             }
-            tempB = tempB->next;
+            h2 = h2->next;
         }
-        
-        // Restore list A values
-        tempA = headA;
-        while(tempA){
-            tempA->val = abs(tempA->val);
-            tempA = tempA->next;
+        h1 = headA;
+        while(h1){
+            h1->val = h1->val*(-1);
+            h1 = h1->next;
         }
         
         return ans;
