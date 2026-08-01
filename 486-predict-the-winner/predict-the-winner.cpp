@@ -1,25 +1,20 @@
 class Solution {
-    int dp[21][21]; //dp array
-	//dp[i][j]= maxm a player can score if they have access to elements form index i to index j only
-    bool checkWin(int ans,int total){
-        return ans>=total-ans;
-    }
-    int maxScore(vector<int>&A,int total,int i,int j){
-        if(i>j)
-            return 0;
-        if(dp[i][j]!=-1)
-            return dp[i][j];
-        dp[i][j]=total-min(maxScore(A,total-A[i],i+1,j),maxScore(A,total-A[j],i,j-1));
-        return dp[i][j];
-    }
 public:
+    int solve(int i,int j,vector<int>&nums){
+        if(i>j) return 0;
+        if(i==j) return nums[j];
+
+        int t1 = nums[i] + min(solve(i+2,j,nums),solve(i+1,j-1,nums));
+        int t2 = nums[j] + min(solve(i,j-2,nums),solve(i+1,j-1,nums));
+
+        return max(t1,t2);
+    }
     bool predictTheWinner(vector<int>& nums) {
-        int total=0;
-        for(int i=0;i<21;i++)
-            for(int j=0;j<21;j++)
-                dp[i][j]=-1;  //initialising to -1
-        for(auto x:nums)
-            total+=x;
-        return checkWin(maxScore(nums,total,0,nums.size()-1),total);
+        int n = nums.size();
+        int total =  accumulate(begin(nums),end(nums),0);
+
+        int p1 = solve(0,n-1,nums);
+        int p2 = total - p1;
+        return p1>=p2;
     }
 };
